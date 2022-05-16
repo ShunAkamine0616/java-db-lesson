@@ -37,7 +37,7 @@ public class DbExam4 {
             // execute
             ResultSet rs = stmt.executeQuery();
 
-            // output
+            //output
             while (rs.next()) {
                 int product_id = rs.getInt("product_id");
                 String product_name = rs.getString("product_name");
