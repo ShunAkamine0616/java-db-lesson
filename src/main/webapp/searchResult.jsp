@@ -11,12 +11,22 @@
 </head>
 <body>
 	<h1>検索結果</h1>
-	<p>データを取得しました</p>
-	<p>
-		product_id:${product.getProduct_id()}<br>
-		product_name:${product.getProduct_name()}<br>
-		price:${product.getPrice()}
-	</p>
+	<table border="1">
+		<tr>
+		<th>product_id</th>
+		<th>product_name</th>
+		<th>price</th>
+		</tr>
+		<c:forEach var="product" items="${productList}">
+		<tr>
+			<td>${product.getProduct_id()}</td>
+			<td>${product.getProduct_name()}</td>
+			<td>${product.getPrice()}</td>
+		</tr>
+		</c:forEach>
+		
+	</table>
+	
 
 	<div>
 		<a href="top.jsp">戻る</a>

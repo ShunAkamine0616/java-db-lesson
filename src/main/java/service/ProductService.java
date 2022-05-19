@@ -33,7 +33,42 @@ public class ProductService {
 
         return Collections.emptyList();
     }
+    
+    
 
+    public List<Product> findByName(String name) {
+        try (Connection conn = DbUtil.getConnection()) {
+            ProductDao ProductDao = new ProductDao(conn);
+            return ProductDao.findByName(name);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return Collections.emptyList();
+    }
+    
+    
+    public List<Product> findByPrice(int price) {
+        try (Connection conn = DbUtil.getConnection()) {
+            ProductDao ProductDao = new ProductDao(conn);
+            return ProductDao.findByPrice(price);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return Collections.emptyList();
+    }
+    
+    public List<Product> findByNameAndPrice(String name, int price) {
+        try (Connection conn = DbUtil.getConnection()) {
+            ProductDao ProductDao = new ProductDao(conn);
+            return ProductDao.findByNameAndPrice(name, price);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return Collections.emptyList();
+    }
     public void register(Product Product) {
         try (Connection conn = DbUtil.getConnection()) {
             ProductDao ProductDao = new ProductDao(conn);

@@ -23,12 +23,12 @@ public class SearchResult extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection connection;
 	private ProductDao productDao;
-    /**
-     * Default constructor. 
-     */
-    public SearchResult() {
-        // TODO Auto-generated constructor stub
-    }
+	/**
+	 * Default constructor. 
+	 */
+	public SearchResult() {
+		// TODO Auto-generated constructor stub
+	}
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
@@ -45,63 +45,46 @@ public class SearchResult extends HttpServlet {
 		// TODO Auto-generated method stub
 		// doGet(request, response);
 		request.setCharacterEncoding("UTF-8");
-        String product_id = request.getParameter("product_id");
-        
-        Integer product_id_int;
-        try {
-        	product_id_int = Integer.parseInt(product_id);
-        } catch (NumberFormatException e) {
-        	product_id_int = null;
-        }
-        
-        if (Utility.isNullOrEmpty(product_id)) {
-            request.setAttribute("result", "product_idを入力してください");
+		String product_name = request.getParameter("product_name");
+		String price = request.getParameter("price");
+		Integer price_int;
 
-            request.getRequestDispatcher("top.jsp").forward(request, response);
-            return;
-        }
-        request.setAttribute("result", "商品が登録されました");
-        // セッションを取得
-        
-        HttpSession session = request.getSession();
+		try {
+			price_int = Integer.parseInt(price);
+		} catch (NumberFormatException e) {
+			price_int = null;
+		}
 
-        // セッションより商品リストを取得
-        // (警告が出るが、無視して良い)
-//        List<Product> productList = (List<Product>) session.getAttribute("productList");
-//        connection = DbUtil.getConnection();
-//		connection.setAutoCommit(false);
-//        ProductDao pDao = new ProductDao(connection);
-        ProductService pService = new ProductService();
-        List<Product> productList = pService.find();
-       
-        // 取得した商品リストが無い場合、ArrayListオブジェクトを新規作成
-//        if (productList == null) {
-//            productList = new ArrayList<>();
-//        }
-        Product product = null;
-        for(Product p: productList) {
-        	if(product_id_int == p.getProduct_id()) {
-        		product = p;
-        	}
-        }
-        
-        if (product == null) {
-            request.setAttribute("result", "対象のデータはありません");
-            request.getRequestDispatcher("top.jsp").forward(request, response);
-            return;
-         }
-        // productオブジェクトを作成し、入力値をセット
-//        Product product = new Product(null, productName, price);
+		HttpSession session = request.getSession();
 
-        // productListに上記で作成したオブジェクトを追加
-//        productList.add(product);
+		ProductService pService = new ProductService();
+		List<Product> productList = null;
 
-        // セッションに商品リスト(productList)を登録
-//        session.setAttribute("productList", productList);
-        session.setAttribute("product", product);
-        // 結果画面へ遷移
-        request.getRequestDispatcher("searchResult.jsp").forward(request, response);
+		if (Utility.isNullOrEmpty(product_name) && Utility.isNullOrEmpty(price)) {
+			productList = pService.find();
+		} else if(!Utility.isNullOrEmpty(product_name) && Utility.isNullOrEmpty(price)){
+			productList = pService.findByName(product_name);
+		} else if(Utility.isNullOrEmpty(product_name) && !Utility.isNullOrEmpty(price)){
+			productList = pService.findByPrice(price_int);
+		} else {
+			productList = pService.findByNameAndPrice(product_name, price_int);
+		} 
+		request.setAttribute("productList", productList);
+		//    
+		//        Product product = null;
+		//        for(Product p: productList) {
+		//        	if(price_int == p.getProduct_id()) {
+		//        		product = p;
+		//        	}
+		//        }
 
+		if (productList.isEmpty()) {
+			request.setAttribute("result", "対象のデータはありません");
+			request.getRequestDispatcher("top.jsp").forward(request, response);
+			return;
+		}
+		request.getRequestDispatcher("searchResult.jsp").forward(request, response);
+		return;
 	}
 
 }

@@ -13,8 +13,11 @@
 <p>${result}</p>
 </c:if>
 <form action="SearchResult" method="post">
-<label>product_id：</label>
-    <input type="text" name="product_id">
+<label>product_name：</label>
+    <input type="text" name="product_name">
+    <br>
+<label>price：</label>
+    <input type="number" name="price">
     <br>
     <button type="submit">検索</button>
 </form>
