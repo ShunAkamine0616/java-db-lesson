@@ -69,6 +69,7 @@ public class ProductService {
 
         return Collections.emptyList();
     }
+    
     public void register(Product Product) {
         try (Connection conn = DbUtil.getConnection()) {
             ProductDao ProductDao = new ProductDao(conn);

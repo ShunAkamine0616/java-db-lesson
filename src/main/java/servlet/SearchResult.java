@@ -43,8 +43,9 @@ public class SearchResult extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		// doGet(request, response);
+		// doGet(request, response)
 		request.setCharacterEncoding("UTF-8");
+		String btn = request.getParameter("btn");
 		String product_name = request.getParameter("product_name");
 		String price = request.getParameter("price");
 		Integer price_int;
@@ -54,37 +55,62 @@ public class SearchResult extends HttpServlet {
 		} catch (NumberFormatException e) {
 			price_int = null;
 		}
-
+		
+		
 		HttpSession session = request.getSession();
 
 		ProductService pService = new ProductService();
 		List<Product> productList = null;
-
-		if (Utility.isNullOrEmpty(product_name) && Utility.isNullOrEmpty(price)) {
-			productList = pService.find();
-		} else if(!Utility.isNullOrEmpty(product_name) && Utility.isNullOrEmpty(price)){
-			productList = pService.findByName(product_name);
-		} else if(Utility.isNullOrEmpty(product_name) && !Utility.isNullOrEmpty(price)){
-			productList = pService.findByPrice(price_int);
+		if(btn.equals("insert")) {
+			if (Utility.isNullOrEmpty(product_name) && Utility.isNullOrEmpty(price)) {
+				request.setAttribute("nameErrMsg", "product_nameは必須です");
+				request.setAttribute("priceErrMsg", "priceは必須です");
+				productList = pService.find();
+				request.getRequestDispatcher("top.jsp").forward(request, response);
+				return;
+			} else if(!Utility.isNullOrEmpty(product_name) && Utility.isNullOrEmpty(price)){
+				request.setAttribute("priceErrMsg", "priceは必須です");
+				productList = pService.findByName(product_name);
+				request.getRequestDispatcher("top.jsp").forward(request, response);
+				return;
+			} else if(Utility.isNullOrEmpty(product_name) && !Utility.isNullOrEmpty(price)){
+				request.setAttribute("nameErrMsg", "product_nameは必須です");
+				productList = pService.findByPrice(price_int);
+				request.getRequestDispatcher("top.jsp").forward(request, response);
+				return;
+			} else {
+				Product p = new Product(product_name, price_int);
+				pService.register(p);
+				request.getRequestDispatcher("insertResult.jsp").forward(request, response);
+				return;
+			} 
 		} else {
-			productList = pService.findByNameAndPrice(product_name, price_int);
-		} 
-		request.setAttribute("productList", productList);
-		//    
-		//        Product product = null;
-		//        for(Product p: productList) {
-		//        	if(price_int == p.getProduct_id()) {
-		//        		product = p;
-		//        	}
-		//        }
-
-		if (productList.isEmpty()) {
-			request.setAttribute("result", "対象のデータはありません");
-			request.getRequestDispatcher("top.jsp").forward(request, response);
+			if (Utility.isNullOrEmpty(product_name) && Utility.isNullOrEmpty(price)) {
+				productList = pService.find();
+			} else if(!Utility.isNullOrEmpty(product_name) && Utility.isNullOrEmpty(price)){
+				productList = pService.findByName(product_name);
+			} else if(Utility.isNullOrEmpty(product_name) && !Utility.isNullOrEmpty(price)){
+				productList = pService.findByPrice(price_int);
+			} else {
+				productList = pService.findByNameAndPrice(product_name, price_int);
+			} 
+			request.setAttribute("productList", productList);
+			//    
+			//        Product product = null;
+			//        for(Product p: productList) {
+			//        	if(price_int == p.getProduct_id()) {
+			//        		product = p;
+			//        	}
+			//        }
+	
+			if (productList.isEmpty()) {
+				request.setAttribute("result", "対象のデータはありません");
+				request.getRequestDispatcher("top.jsp").forward(request, response);
+				return;
+			}
+			request.getRequestDispatcher("searchResult.jsp").forward(request, response);
 			return;
 		}
-		request.getRequestDispatcher("searchResult.jsp").forward(request, response);
-		return;
 	}
 
 }
