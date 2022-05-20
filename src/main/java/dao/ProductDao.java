@@ -16,7 +16,8 @@ public class ProductDao {
 	private static final String SQL_SELECT_WHERE_PRODUCT_NAME = "SELECT * FROM products WHERE product_name = ?";
 	private static final String SQL_SELECT_WHERE_PRICE = "SELECT * FROM products WHERE price = ?";
 	private static final String SQL_SELECT_WHERE_PRODUCT_NAME_AND_PRICE = "SELECT * FROM products WHERE product_name = ? AND price = ?";
-	
+	private static final String SQL_DELETE_WHERE_PRODUCT_ID = "DELETE FROM products WHERE product_id = ?";
+	private static final String SQL_UPDATE_WHERE_PRODUCT_ID = "UPDATE products SET product_name = ?, price = ? WHERE product_id = ?";
 	public ProductDao(Connection connection) {
 		this.connection = connection;
 	}
@@ -106,6 +107,27 @@ public class ProductDao {
     		stmt.setInt(2, product.getPrice());
     		
     		stmt.executeUpdate();
+    	} catch (SQLException e) {
+    		throw new RuntimeException(e);
+    	}
+	}
+	
+	public int delete(int id) {
+		try (PreparedStatement stmt = connection.prepareStatement(SQL_DELETE_WHERE_PRODUCT_ID)) {
+    		stmt.setInt(1, id);
+    		return stmt.executeUpdate();
+    	} catch (SQLException e) {
+    		throw new RuntimeException(e);
+    	}
+	}
+	
+	public int update(int id, String name, int price) {
+		try (PreparedStatement stmt = connection.prepareStatement(SQL_UPDATE_WHERE_PRODUCT_ID)) {
+    		stmt.setString(1, name);
+    		stmt.setInt(2, price);
+    		stmt.setInt(3, id);
+    		
+    		return stmt.executeUpdate();
     	} catch (SQLException e) {
     		throw new RuntimeException(e);
     	}

@@ -34,7 +34,16 @@ public class ProductService {
         return Collections.emptyList();
     }
     
-    
+    public Product findById(int id) {
+        try (Connection conn = DbUtil.getConnection()) {
+            ProductDao ProductDao = new ProductDao(conn);
+            return ProductDao.findById(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 
     public List<Product> findByName(String name) {
         try (Connection conn = DbUtil.getConnection()) {
@@ -77,5 +86,24 @@ public class ProductService {
             e.printStackTrace();
         }
     }
+    
+    public int delete(int id) {
+        try (Connection conn = DbUtil.getConnection()) {
+            ProductDao ProductDao = new ProductDao(conn);
+            return ProductDao.delete(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
 
+    public int update(int id, String name, int price) {
+        try (Connection conn = DbUtil.getConnection()) {
+            ProductDao ProductDao = new ProductDao(conn);
+            return ProductDao.update(id, name, price);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
 }
